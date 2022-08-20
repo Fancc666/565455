@@ -9,5 +9,5 @@ class handler(BaseHTTPRequestHandler):
         self.end_headers()
         req = requests.get("http://bilibili.com/")
         req.encoding = "UTF-8"
-        self.wfile.write(str(req.text).encode())
+        self.wfile.write(str(req.text).encode('utf-8'))
         return
