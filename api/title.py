@@ -3,13 +3,15 @@ import requests
 import re
 import json
 from urllib.parse import unquote
+import urllib3
 
 
 class handler(BaseHTTPRequestHandler):
     def do_GET(self):
         self.send_response(200)
-        self.send_header('Content-type', 'text/plain')
+        self.send_header('Content-type', 'text/html')
         self.end_headers()
+        urllib3.disable_warnings()
 
         self.reply = {
             'code': 0,
@@ -32,6 +34,7 @@ class handler(BaseHTTPRequestHandler):
             except Exception as e:
                 self.err("access is invalid")
                 self.end()
+                self.show_text("\n")
                 self.show_text(e)
         else:
             self.err("parameter is missing")
@@ -47,7 +50,7 @@ class handler(BaseHTTPRequestHandler):
         else:
             return ""
     def get_html(self, url):
-        req = requests.get(url)
+        req = requests.get(url, verify=False)
         req.encoding = "utf-8"
         return req.text
     def err(self, msg):
