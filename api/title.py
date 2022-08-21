@@ -18,19 +18,19 @@ class handler(BaseHTTPRequestHandler):
 
         l = self.get_para("link")
         if l != "":
-            # try:
-            #     req_text = self.get_html(l)
-            #     tit = re.findall(r"<title>(.*?)</title>", req_text)
-            #     if len(tit) > 0:
-            #         self.reply['msg'] = "ok"
-            #         self.reply['title'] = tit[0]
-            #     else:
-            #         self.err("there is no title in the site")
-            #     self.end()
-            # except:
-            #     self.err("access is invalid")
-            #     self.end()
-            self.show_text(self.get_html(l))
+            try:
+                req_text = self.get_html(l)
+                tit = re.findall(r"<title>(.*?)</title>", req_text)
+                if len(tit) > 0:
+                    self.reply['msg'] = "ok"
+                    self.reply['title'] = tit[0]
+                else:
+                    self.err("there is no title in the site")
+                self.end()
+            except Exception as e:
+                self.show_text(e)
+                self.err("access is invalid")
+                self.end()
         else:
             self.err("parameter is missing")
             self.end()
