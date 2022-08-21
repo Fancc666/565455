@@ -34,8 +34,6 @@ class handler(BaseHTTPRequestHandler):
             except Exception as e:
                 self.err("access is invalid")
                 self.end()
-                self.show_text("\n")
-                self.show_text(e)
         else:
             self.err("parameter is missing")
             self.end()
