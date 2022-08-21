@@ -2,7 +2,6 @@ from http.server import BaseHTTPRequestHandler
 import requests
 import re
 import json
-import urllib3
 
 
 class handler(BaseHTTPRequestHandler):
@@ -10,7 +9,6 @@ class handler(BaseHTTPRequestHandler):
         self.send_response(200)
         self.send_header('Content-type', 'text/plain')
         self.end_headers()
-        urllib3.disable_warnings()
 
         self.reply = {
             'code': 0,
@@ -47,7 +45,7 @@ class handler(BaseHTTPRequestHandler):
         else:
             return ""
     def get_html(self, url):
-        req = requests.get(url, verify=False)
+        req = requests.get(url)
         req.encoding = "utf-8"
         return req.text
     def err(self, msg):
