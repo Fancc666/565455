@@ -2,6 +2,7 @@ from http.server import BaseHTTPRequestHandler
 import requests
 import re
 import json
+from urllib.parse import unquote
 
 
 class handler(BaseHTTPRequestHandler):
@@ -18,6 +19,7 @@ class handler(BaseHTTPRequestHandler):
 
         l = self.get_para("link")
         if l != "":
+            l = unquote(l, 'utf-8')
             try:
                 req_text = self.get_html(l)
                 tit = re.findall(r"<title>(.*?)</title>", req_text)
@@ -28,9 +30,9 @@ class handler(BaseHTTPRequestHandler):
                     self.err("there is no title in the site")
                 self.end()
             except Exception as e:
-                self.show_text(e)
                 self.err("access is invalid")
                 self.end()
+                self.show_text(e)
         else:
             self.err("parameter is missing")
             self.end()
