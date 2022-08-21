@@ -24,7 +24,7 @@ class handler(BaseHTTPRequestHandler):
             l = unquote(l, 'utf-8')
             try:
                 req_text = self.get_html(l)
-                tit = re.findall(r"<title>(.*?)</title>", req_text)
+                tit = re.findall(r"<title(?:.*)>(.*?)</title>", req_text)
                 if len(tit) > 0:
                     self.reply['msg'] = "ok"
                     self.reply['title'] = tit[0]
