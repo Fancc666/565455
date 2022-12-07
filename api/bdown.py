@@ -28,7 +28,7 @@ class handler(BaseHTTPRequestHandler):
                 v_link = re.findall(r"\"readyVideoUrl\":\"(.*?)\"", req_text)
                 if len(v_link) > 0:
                     self.reply['msg'] = "ok"
-                    self.reply['title'] = v_link[0]
+                    self.reply['v_link'] = v_link[0]
                 else:
                     self.err("can not find video link")
                 self.end()
