@@ -24,13 +24,27 @@ class handler(BaseHTTPRequestHandler):
         if bv_num != "":
             bv_num = unquote(bv_num, 'utf-8')
             try:
-                req_text = self.get_html("https://m.bilibili.com/video/" + bv_num)
-                v_link = re.findall(r"\"readyVideoUrl\":\"(.*?)\"", req_text)
-                if len(v_link) > 0:
-                    self.reply['msg'] = "ok"
-                    self.reply['v_link'] = v_link[0]
-                else:
+                # 获取CID AID
+                cid_html = self.get_html("https://api.bilibili.com/x/web-interface/view/detail?aid=&bvid="+bv_num[3:]+"&recommend_type=&need_rcmd_reason=1")
+                cid_json = json.loads(cid_html)
+                try:
+                    aid = cid_json["data"]["View"]["aid"]
+                    cid = cid_json["data"]["View"]["cid"]
+                except Exception as e:
+                    self.err("aid/cid is error")
+                    self.end()
+                # 获取视频链接
+                video_url = "https://api.bilibili.com/x/player/playurl?cid="+str(cid)+"&avid="+str(aid)+"&platform=html5&otype=json&qn=16&type=mp4&html5=1"
+                video_html = self.get_html(video_url)
+                video_json = json.loads(video_html)
+                try:
+                    video_link = video_json["data"]["durl"][0]["url"]
+                except Exception as e:
                     self.err("can not find video link")
+                    self.end()
+                video_link_r = "https://upos-sz-mirrorcos.bilivideo.com/"+"/".join(video_link.split("/")[3:])
+                self.reply["msg"] = "ok"
+                self.reply["v_link"] = video_link_r
                 self.end()
             except Exception as e:
                 self.err("access is invalid")
@@ -51,7 +65,8 @@ class handler(BaseHTTPRequestHandler):
     def get_html(self, url):
         headers = {
             "User-Agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 13_2_3 like Mac OS X) \
-                        AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.0.3 Mobile/15E148 Safari/604.1"
+                        AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.0.3 Mobile/15E148 Safari/604.1",
+            "referer": "https://m.bilibili.com/"
         }
         req = requests.get(url, verify=False, headers=headers)
         req.encoding = "utf-8"
