@@ -21,15 +21,24 @@ class handler(BaseHTTPRequestHandler):
         }
 
         bv_num = self.get_para("bv")
-        if bv_num != "":
-            bv_num = unquote(bv_num, 'utf-8')
+        p_num = self.get_para("p")
+
+        bv_num = unquote(bv_num, 'utf-8')
+        p_num = unquote(p_num, 'utf-8')
+        if bv_num != "" and p_num != "" and p_num.isnumeric():
             try:
-                # 获取CID AID
+                p_num = int(p_num)
+                # 获取AID
                 cid_html = self.get_html("https://api.bilibili.com/x/web-interface/view/detail?aid=&bvid="+bv_num[3:]+"&recommend_type=&need_rcmd_reason=1")
                 cid_json = json.loads(cid_html)
                 try:
                     aid = cid_json["data"]["View"]["aid"]
-                    cid = cid_json["data"]["View"]["cid"]
+                    # 获取CID
+                    pages = cid_json["data"]["View"]["pages"]
+                    if (len(pages) >= p_num and p_num > 0):
+                        cid = cid_json["data"]["View"]["pages"][p_num - 1]["cid"]
+                    else:
+                        cid = cid_json["data"]["View"]["cid"]
                 except Exception as e:
                     self.err("aid/cid is error")
                     self.end()
