@@ -33,6 +33,7 @@ class handler(BaseHTTPRequestHandler):
                 except Exception as e:
                     self.err("aid/cid is error")
                     self.end()
+                    return
                 # 获取视频链接
                 video_url = "https://api.bilibili.com/x/player/playurl?cid="+str(cid)+"&avid="+str(aid)+"&platform=html5&otype=json&qn=16&type=mp4&html5=1"
                 video_html = self.get_html(video_url)
@@ -42,6 +43,7 @@ class handler(BaseHTTPRequestHandler):
                 except Exception as e:
                     self.err("can not find video link")
                     self.end()
+                    return
                 video_link_r = "https://upos-sz-mirrorcos.bilivideo.com/"+"/".join(video_link.split("/")[3:])
                 self.reply["msg"] = "ok"
                 self.reply["v_link"] = video_link_r
