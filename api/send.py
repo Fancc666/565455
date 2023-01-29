@@ -24,6 +24,8 @@ class handler(BaseHTTPRequestHandler):
         link = self.get_para("link")
         link = unquote(link, 'utf-8')
         
+        self.send_header('Access-Control-Allow-Origin', '*')
+        
         if link!="":
             try:
                 response = requests.get(link, headers=self.headers)
