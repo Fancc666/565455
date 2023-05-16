@@ -1,7 +1,7 @@
 # 用不变的链接导入nodefree节点-clash
 
 from http.server import BaseHTTPRequestHandler
-from http.server import HTTPServer
+# from http.server import HTTPServer
 import requests
 import re
 import json
@@ -58,7 +58,7 @@ class handler(BaseHTTPRequestHandler):
         pass
 
 
-if __name__ == "__main__":
-    s = HTTPServer(('192.168.18.8', 8888), handler)# localhost
-    print("server is running...")
-    s.serve_forever()
+# if __name__ == "__main__":
+#     s = HTTPServer(('localhost', 8888), handler)# localhost
+#     print("server is running...")
+#     s.serve_forever()
