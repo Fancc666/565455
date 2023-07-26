@@ -24,9 +24,38 @@ class handler(BaseHTTPRequestHandler):
             latest_link_block = re.findall(r"<a class=\"item-img-inner\" href=\"(https://nodefree\.org/p/.+?)\"", home_html)[0]
             latest_link_html = self.get_html(latest_link_block)
             latest_link = re.findall(r"<p>(https://nodefree\.org/dy/.+?\.yaml)</p>", latest_link_html)[0]
-            self.send_response(302)
-            self.send_header('Location', latest_link)
+            link_text = self.get_html(latest_link)
+            # self.send_response(302)
+            # self.send_header('Location', latest_link)
+            # self.end_headers()
+            self.send_response(200)
+            self.send_header('Content-type', 'text/yaml; charset=utf-8')
             self.end_headers()
+            # wash
+            text_lines = link_text.split("\n")
+            flag = 0
+            index_list = []
+            name_list = []
+            for x in range(120):
+                # 前处理
+                if "mode:" in text_lines[x]:
+                    if flag > 0:
+                        index_list.append(x)
+                        name = re.findall(r"name: (.*?),", text_lines[x])[0]
+                        name_list.append(name)
+                    flag += 1
+                # 后处理
+                for n in name_list:
+                    if re.findall(r"- "+n+r"$", text_lines[x]):
+                        index_list.append(x)
+            index_list = list(set(index_list))
+            index_list.sort()
+            index_content_list = [text_lines[x] for x in index_list]
+            for i in index_content_list:
+                text_lines.remove(i)
+            op = "\n".join(text_lines)
+            # show
+            self.show_text(op)
             self.end_with_none()
         except Exception as e:
             self.send_response(500)
