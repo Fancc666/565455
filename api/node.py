@@ -56,7 +56,6 @@ class handler(BaseHTTPRequestHandler):
             op = "\n".join(text_lines)
             # show
             self.show_text(op)
-            self.end_with_none()
         except Exception as e:
             self.send_response(500)
             self.end_headers()
@@ -83,8 +82,6 @@ class handler(BaseHTTPRequestHandler):
     def end(self):
         self.show_text("api_response=")
         self.show_text(json.dumps(self.reply))
-    def end_with_none():
-        pass
 
 
 # if __name__ == "__main__":
