@@ -44,6 +44,10 @@ class handler(BaseHTTPRequestHandler):
                         name = re.findall(r"name: (.*?),", text_lines[x])[0]
                         name_list.append(name)
                     flag += 1
+                if "vless" in text_lines[x]:
+                    index_list.append(x)
+                    name = re.findall(r"name: (.*?),", text_lines[x])[0]
+                    name_list.append(name)
                 # 后处理
                 for n in name_list:
                     if re.findall(r"- "+n+r"$", text_lines[x]):
