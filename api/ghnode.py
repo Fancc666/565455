@@ -30,13 +30,14 @@ class handler(BaseHTTPRequestHandler):
             self.send_header('Content-type', 'text/yml; charset=utf-8')
             self.end_headers()
             # wash
-            text_lines = link_text.split("\n")
-            op = ""
-            for line in text_lines:
-                if "fake-ip-filter:" in line:
-                    continue
-                op += line
-                op += "\n"
+            # text_lines = link_text.split("\n")
+            # op = ""
+            # for line in text_lines:
+            #     if "fake-ip-filter:" in line:
+            #         continue
+            #     op += line
+            #     op += "\n"
+            op = link_text.replace("&quot;", "\"")
             self.show_text(op)
         except Exception as e:
             self.send_response(500)
