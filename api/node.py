@@ -1,7 +1,7 @@
 # 用不变的链接导入nodefree节点-clash
 
 from http.server import BaseHTTPRequestHandler
-# from http.server import HTTPServer
+from http.server import HTTPServer
 import requests
 import re
 import json
@@ -20,48 +20,60 @@ class handler(BaseHTTPRequestHandler):
 
         # 得到最新链接，并使用使用header返回
         try:
-            home_html = self.get_html("https://nodefree.org/")
-            latest_link_block = re.findall(r"<a class=\"item-img-inner\" href=\"(https://nodefree\.org/p/.+?)\"", home_html)[0]
-            latest_link_html = self.get_html(latest_link_block)
-            latest_link = re.findall(r"<p>(https://nodefree\.org/dy/.+?\.yaml)</p>", latest_link_html)[0]
-            link_text = self.get_html(latest_link)
-            # self.send_response(302)
-            # self.send_header('Location', latest_link)
-            # self.end_headers()
             self.send_response(200)
             self.send_header('Content-type', 'text/yaml; charset=utf-8')
             self.end_headers()
+            # home_html = self.get_html("https://nodefree.org/")
+            # latest_link_block = re.findall(r"<a class=\"item-img-inner\" href=\"(https://nodefree\.org/p/.+?)\"", home_html)[0]
+            # latest_link_html = self.get_html(latest_link_block)
+            # latest_link = re.findall(r"<p>(https://nodefree\.org/dy/.+?\.yaml)</p>", latest_link_html)[0]
+            # link_text = self.get_html(latest_link)
+            # self.send_response(302)
+            # self.send_header('Location', latest_link)
+            # self.end_headers()
             # wash
-            text_lines = link_text.split("\n")
-            flag = 0
-            index_list = []
-            name_list = []
-            for x in range(120):
-                # 前处理
-                if "mode:" in text_lines[x]:
-                    if flag > 0:
-                        index_list.append(x)
-                        name = re.findall(r"name: (.*?),", text_lines[x])[0]
-                        name_list.append(name)
-                    flag += 1
-                if "vless" in text_lines[x]:
-                    index_list.append(x)
-                    name = re.findall(r"name: (.*?),", text_lines[x])[0]
-                    name_list.append(name)
-                if "::" in text_lines[x]:
-                    index_list.append(x)
-                    name = re.findall(r"name: (.*?),", text_lines[x])[0]
-                    name_list.append(name)
-                # 后处理
-                for n in name_list:
-                    if re.findall(r"- "+n+r"$", text_lines[x]):
-                        index_list.append(x)
-            index_list = list(set(index_list))
-            index_list.sort()
-            index_content_list = [text_lines[x] for x in index_list]
-            for i in index_content_list:
-                text_lines.remove(i)
-            op = "\n".join(text_lines)
+            # text_lines = link_text.split("\n")
+            # flag = 0
+            # index_list = []
+            # name_list = []
+            # for x in range(120):
+            #     # 前处理
+            #     if "mode:" in text_lines[x]:
+            #         if flag > 0:
+            #             index_list.append(x)
+            #             name = re.findall(r"name: (.*?),", text_lines[x])[0]
+            #             name_list.append(name)
+            #         flag += 1
+            #     if "vless" in text_lines[x]:
+            #         index_list.append(x)
+            #         name = re.findall(r"name: (.*?),", text_lines[x])[0]
+            #         name_list.append(name)
+            #     if "::" in text_lines[x]:
+            #         index_list.append(x)
+            #         name = re.findall(r"name: (.*?),", text_lines[x])[0]
+            #         name_list.append(name)
+            #     # 后处理
+            #     for n in name_list:
+            #         if re.findall(r"- "+n+r"$", text_lines[x]):
+            #             index_list.append(x)
+            # index_list = list(set(index_list))
+            # index_list.sort()
+            # index_content_list = [text_lines[x] for x in index_list]
+            # for i in index_content_list:
+            #     text_lines.remove(i)
+            # op = "\n".join(text_lines)
+            # op = link_text
+            op = """
+mixed-port: 7890
+mode: Rule
+proxies:
+  - {name: 本链不再维护，已失效, server: 127.0.0.1, port: 443, type: ss, cipher: aes-128-gcm, password: 123456, udp: true}
+proxy-groups:
+  - name: 🔰 节点选择
+    type: select
+    proxies:
+      - 本链不再维护，已失效
+            """
             # show
             self.show_text(op)
         except Exception as e:
@@ -92,7 +104,7 @@ class handler(BaseHTTPRequestHandler):
         self.show_text(json.dumps(self.reply))
 
 
-# if __name__ == "__main__":
-#     s = HTTPServer(('localhost', 8888), handler)# localhost
-#     print("server is running...")
-#     s.serve_forever()
+if __name__ == "__main__":
+    s = HTTPServer(('localhost', 8888), handler)# localhost
+    print("server is running...")
+    s.serve_forever()
