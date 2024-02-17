@@ -4,6 +4,7 @@ import re
 import json
 from urllib.parse import unquote, quote
 import urllib3
+from bs4 import BeautifulSoup
 
 class GWD:
     def __init__(self):
@@ -31,6 +32,13 @@ class GWD:
         response.encoding = "utf-8"
         self.response = response
 
+    def send_yinzheng(self, char):
+        char = quote(char)
+        para = f"https://www.gushiwen.cn/dict/fanchayinzheng.aspx?value={char}"
+        response = requests.get(para, headers=self.headers, cookies=self.cookie_seperator(self.cookie))
+        response.encoding = "utf-8"
+        self.response = response
+
 class handler(BaseHTTPRequestHandler):
     def do_GET(self):
         self.send_response(200)
@@ -45,6 +53,7 @@ class handler(BaseHTTPRequestHandler):
 
         l = self.get_para("c")
         t = self.get_para("type")
+        f = self.get_para("f")
         if t == "":
             self.resp_type = "json"
         else:
@@ -53,8 +62,20 @@ class handler(BaseHTTPRequestHandler):
             l = unquote(l, 'utf-8')
             try:
                 g = GWD()
-                g.send_request(l)
-                self.show_text(g.response.text)
+                if not f == "yz":
+                    # 普通反查
+                    g.send_request(l)
+                    html_text = g.response.text
+                    soup = BeautifulSoup(html_text, "html.parser")
+                    css_link = soup.find_all("link")[0]
+                    css_link["href"] = "https://www.gushiwen.cn" + css_link["href"]
+                    new_html = str(soup)
+                    new_html = new_html.replace("/dict/fanchayinzheng.aspx?value=", "?f=yz&c=")
+                    self.show_text(new_html)
+                else:
+                    # 引证反查
+                    g.send_yinzheng(l)
+                    self.show_text(g.response.text)
             except Exception as e:
                 self.err("access is invalid")
                 self.end()
