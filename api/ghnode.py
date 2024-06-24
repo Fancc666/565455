@@ -1,6 +1,6 @@
 # 用不变的链接导入clashgithub节点-clash
 
-from http.server import BaseHTTPRequestHandler
+from http.server import BaseHTTPRequestHandler, HTTPServer
 import requests
 import re
 import json
@@ -18,11 +18,11 @@ class handler(BaseHTTPRequestHandler):
         }
 
         try:
-            home_html = self.get_html("https://clashgithub.com/")
-            latest_link_block = re.findall(r"<a href=\"(http.*?)\" title=\"", home_html)[0]
-            latest_link_html = self.get_html(latest_link_block)
-            latest_link = re.findall(r"<p>(https://clashgithub\.com/wp-content/uploads/rss/.*\.yml)</p>", latest_link_html)[0]
-            link_text = self.get_html(latest_link)
+            # home_html = self.get_html("https://clashgithub.com/")
+            # latest_link_block = re.findall(r"<a href=\"(http.*?)\" title=\"", home_html)[0]
+            # latest_link_html = self.get_html(latest_link_block)
+            # latest_link = re.findall(r"<p>(https://clashgithub\.com/wp-content/uploads/rss/.*\.yml)</p>", latest_link_html)[0]
+            # link_text = self.get_html(latest_link)
             # self.send_response(302)
             # self.send_header('Location', latest_link)
             # self.end_headers()
@@ -37,7 +37,17 @@ class handler(BaseHTTPRequestHandler):
             #         continue
             #     op += line
             #     op += "\n"
-            op = link_text.replace("&quot;", "\"")
+            op = """
+mixed-port: 7890
+mode: Rule
+proxies:
+  - {name: 本链不再维护，已失效, server: 127.0.0.1, port: 443, type: ss, cipher: aes-128-gcm, password: 123456, udp: true}
+proxy-groups:
+  - name: 🔰 节点选择
+    type: select
+    proxies:
+      - 本链不再维护，已失效
+            """
             self.show_text(op)
         except Exception as e:
             self.send_response(500)
@@ -67,7 +77,7 @@ class handler(BaseHTTPRequestHandler):
         self.show_text(json.dumps(self.reply))
 
 
-# if __name__ == "__main__":
-#     s = HTTPServer(('localhost', 8888), handler)# localhost
-#     print("server is running...")
-#     s.serve_forever()
+if __name__ == "__main__":
+    s = HTTPServer(('localhost', 8888), handler)# localhost
+    print("server is running...")
+    s.serve_forever()
