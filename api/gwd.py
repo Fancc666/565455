@@ -10,10 +10,13 @@ class GWD:
     def __init__(self):
         self.headers = {
             "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.0.0 Safari/537.36",
-            "Content-Type": "application/x-www-form-urlencoded"
+            "Content-Type": "application/x-www-form-urlencoded",
+            "Origin": "https://www.gushiwen.cn"# 新加几个headers
         }
-        self.cookie = "Hm_lvt_9007fab6814e892d3020a64454da5a55=169975427=2; login=flase; ticketStr=201583372%7cgQHe7zwAAAAAAAAAAS5odHRwOi8vd2VpeGluLnFxLmNvbS9xLzAyeHRXOFJJbGVkN2kxb1YtVE5CMVUAAgQ5MVBlAwQAjScA; ASP.NET_SessionId=t5pb5u30gkzeqji22ig32giq; codeyzgswso=85d38c0278c0fb7f; gsw2017user=5168703%7c6A5471B38CFFFF27880E4F7E9679CF7Adaac0c43%7c2000%2f1%2f1; login=flase; wxopenid=oVc5H0qwnh6rNv6IynEDqtFIeuhc; Hm_lpvt_9007fab6814e892d3020a64454da5a55=1699754357"
-        self.url = "https://so.gushiwen.cn/dict/fancha.aspx"
+        # 更新cookie
+        self.cookie = "login=flase; Hm_lvt_9007fab6814e892d3020a64454da5a55=1723951959; HMACCOUNT=8297C387991BD386; ticketStr=207398240%7cgQEN8DwAAAAAAAAAAS5odHRwOi8vd2VpeGluLnFxLmNvbS9xLzAyaVlsYVI3bGVkN2kxWnRVRU5DMTEAAgRda8FmAwQAjScA; ASP.NET_SessionId=bvhr3ml011llm1fixyutpkak; codeyz=a0f5b1ebdf5f69a5; gsw2017user=5168703%7c6A5471B38CFFFF27880E4F7E9679CF7Adaac0c43%7c2000%2f1%2f1%7c2000%2f1%2f1; wxopenid=oVc5H0qwnh6rNv6IynEDqtFIeuhc; Hm_lpvt_9007fab6814e892d3020a64454da5a55=1723952044"
+        # 由so域名变成了www
+        self.url = "https://www.gushiwen.cn/dict/fancha.aspx"
         self.response = None
 
     def cookie_seperator(self, cookie_text):
@@ -27,7 +30,7 @@ class GWD:
 
     def send_request(self, char):
         char = quote(char)
-        para = f"z={char}&url=so.gushiwen.cn%2Fshiwenv_573d6514abc4.aspx"
+        para = f"z={char}&url=www.gushiwen.cn%2Fshiwenv_900977cc30e3.aspx"# 变更www域名
         response = requests.post(self.url, data=para, headers=self.headers, cookies=self.cookie_seperator(self.cookie))
         response.encoding = "utf-8"
         self.response = response
@@ -107,7 +110,7 @@ class handler(BaseHTTPRequestHandler):
         self.show_text(json.dumps(self.reply))
 
 
-# if __name__ == "__main__":
-#     s = HTTPServer(('localhost', 8888), handler)
-#     print("server is running...")
-#     s.serve_forever()
+if __name__ == "__main__":
+    s = HTTPServer(('localhost', 8888), handler)
+    print("server is running...")
+    s.serve_forever()
