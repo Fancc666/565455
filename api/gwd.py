@@ -110,7 +110,7 @@ class handler(BaseHTTPRequestHandler):
         self.show_text(json.dumps(self.reply))
 
 
-if __name__ == "__main__":
-    s = HTTPServer(('localhost', 8888), handler)
-    print("server is running...")
-    s.serve_forever()
+# if __name__ == "__main__":
+#     s = HTTPServer(('localhost', 8888), handler)
+#     print("server is running...")
+#     s.serve_forever()
