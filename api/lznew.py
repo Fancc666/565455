@@ -59,13 +59,15 @@ class handler(BaseHTTPRequestHandler):
                 information = json.loads(response_sign.text)
 
                 # 4.end
-                if "dom" in information and "url" in information:
-                    file_url = f"{information['dom']}/file/{information['url']}"
-                    self.reply["link"] = file_url
-                    self.end()
-                    return
-                else:
+                if not ("dom" in information and "url" in information):
                     raise(Exception("No key error."))
+                file_url = f"{information['dom']}/file/{information['url']}"
+
+                # 5.重定向
+                rfile_head = self.get_head(file_url)
+                self.reply["link"] = rfile_head
+                self.end()
+                return
             except Exception as e:
                 self.err("access is invalid")
                 self.end()
