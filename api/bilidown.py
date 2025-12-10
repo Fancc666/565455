@@ -41,7 +41,7 @@ class handler(BaseHTTPRequestHandler):
                     else:
                         cid = cid_json["data"]["View"]["cid"]
                 except Exception as e:
-                    self.err("aid/cid is error"+e)
+                    self.err("aid/cid is error"+str(e))
                     self.end()
                     return
                 # 获取视频链接
@@ -51,7 +51,7 @@ class handler(BaseHTTPRequestHandler):
                 try:
                     video_link = video_json["data"]["durl"][0]["url"]
                 except Exception as e:
-                    self.err("can not find video link"+e)
+                    self.err("can not find video link"+str(e))
                     self.end()
                     return
                 video_link_r = "https://upos-sz-mirrorcos.bilivideo.com/"+"/".join(video_link.split("/")[3:])
@@ -59,7 +59,7 @@ class handler(BaseHTTPRequestHandler):
                 self.reply["v_link"] = video_link_r
                 self.end()
             except Exception as e:
-                self.err("access is invalid"+e+cid_html)
+                self.err("access is invalid"+str(e)+cid_html)
                 self.end()
         else:
             self.err("parameter is missing")
